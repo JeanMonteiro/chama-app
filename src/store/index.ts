@@ -1,15 +1,24 @@
-import { createStore, Store } from "redux";
+import { applyMiddleware, createStore, Store } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
+import createSagaMiddleware from "redux-saga";
 import { rootReducer } from "./ducks";
-import { UsersState } from "./ducks/users";
+import { HistoryState } from "./ducks/history";
+import { UserState } from "./ducks/users";
+import { rootSaga } from "./sagas";
 
-export interface ApplicationStore {
-  user: UsersState;
+const sagaMiddleware = createSagaMiddleware();
+
+const middlewares = [sagaMiddleware];
+
+const composer = composeWithDevTools(applyMiddleware(...middlewares));
+
+export interface ApplicationState {
+  users: UserState;
+  history: HistoryState;
 }
 
-const store: Store<ApplicationStore> = createStore(
-  rootReducer,
-  composeWithDevTools()
-);
+const store: Store<ApplicationState> = createStore(rootReducer, composer);
+
+sagaMiddleware.run(rootSaga);
 
 export default store;

@@ -1,7 +1,9 @@
 import { all, call, spawn } from "redux-saga/effects";
 import users from "./users";
+import history from "./history";
+import { toast } from "react-toastify";
 
-const sagas: any = [...users];
+const sagas: any = [...users, ...history];
 
 export function* rootSaga() {
   yield all([
@@ -12,6 +14,7 @@ export function* rootSaga() {
             yield call(saga);
             break;
           } catch (e) {
+            yield call(toast, "Erro inesperado!", { type: "error" });
           }
         }
       })
